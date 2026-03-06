@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مدونة البرمجيات | لوحة التحكم</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-color: #00d4ff;
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --admin-color: #ff4757;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Cairo', 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* --- زر دخول المدير (أعلى اليمين) --- */
+        .admin-login-btn {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 2000;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-main);
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 5px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: 0.3s;
+        }
+        .admin-login-btn:hover { background: var(--admin-color); }
+
+        /* --- لوحة تحكم المدير --- */
+        #admin-panel {
+            display: none; /* مخفية افتراضياً */
+            position: fixed;
+            top: 50px;
+            right: 10px;
+            width: 250px;
+            background: var(--card-bg);
+            border: 2px solid var(--admin-color);
+            padding: 15px;
+            border-radius: 10px;
+            z-index: 2000;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .admin-active .editable {
+            border: 1px dashed var(--primary-color) !important;
+            cursor: edit;
+        }
+
+        /* --- التنسيقات الأساسية للموقع --- */
+        header {
+            background: rgba(15, 23, 42, 0.9);
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .logo { font-size: 1.5rem; font-weight: 700; color: var(--primary-color); text-decoration: none; }
+        
+        .hero { text-align: center; padding: 60px 5%; background: radial-gradient(circle at top, #1e293b, #0f172a); }
+
+        .container { display: grid; grid-template-columns: 1fr 300px; gap: 30px; padding: 40px 5%; }
+
+        .content-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
+
+        .card { background: var(--card-bg); border-radius: 15px; padding: 20px; position: relative; }
+        
+        .badge { background: linear-gradient(135deg, #00d4ff, #0055ff); padding: 4px 12px; border-radius: 20px; font-size: 12px; }
+
+        .download-btn {
+            display: block; text-align: center; background: var(--primary-color);
+            color: #000; text-decoration: none; padding: 10px; border-radius: 8px; font-weight: bold; margin-top: 15px;
+        }
+
+        input[type="text"] {
+            width: 100%; padding: 8px; margin-top: 5px; border-radius: 5px; border: none;
+        }
+
+        @media (max-width: 900px) { .container { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+    <button class="admin-login-btn" onclick="loginAdmin()">
+        <i class="fas fa-lock"></i> دخول المدير
+    </button>
+
+    <div id="admin-panel">
+        <h4 style="color: var(--admin-color); margin-bottom: 10px;">لوحة المدير</h4>
+        <p style="font-size: 12px;">يمكنك الآن الضغط على أي نص في الموقع لتعديله مباشرة.</p>
+        <button onclick="saveChanges()" style="width:100%; background: green; color:white; border:none; padding:8px; border-radius:5px; cursor:pointer;">حفظ التعديلات</button>
+        <button onclick="logoutAdmin()" style="width:100%; background: #444; color:white; border:none; padding:8px; border-radius:5px; cursor:pointer; margin-top:5px;">خروج</button>
+    </div>
+
+    <header>
+        <a href="#" class="logo editable" id="site-logo">DIGITAL HUB</a>
+        <nav>
+            <ul style="display:flex; list-style:none; gap:15px;">
+                <li><a href="#" class="editable">الرئيسية</a></li>
+                <li><a href="#" class="editable">تطبيقات</a></li>
+                <li><a href="#" class="editable">ألعاب</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <h1 class="editable" id="main-title">أهلاً بك في منصة الألعاب المعدلة</h1>
+        <p class="editable">حمل أحدث الألعاب والبرامج والكورسات مجاناً</p>
+    </section>
+
+    <div class="container">
+        <main class="content-grid" id="main-content">
+            <div class="card">
+                <span class="badge editable">العاب</span>
+                <h3 class="card-title editable">اسم اللعبة هنا</h3>
+                <p class="card-text editable">وصف قصير للعبة المعدلة وما تحتويه من إضافات.</p>
+                <a href="#" class="download-btn">تحميل الآن</a>
+                <div class="admin-only" style="display:none; margin-top:10px;">
+                    <label style="font-size:10px;">رابط التحميل:</label>
+                    <input type="text" value="https://link.com" onchange="updateLink(this)">
+                </div>
+            </div>
+        </main>
+
+        <aside>
+            <div class="card">
+                <h4 class="editable">أحدث الإضافات</h4>
+                <ul style="font-size:14px; padding-right:20px;">
+                    <li class="editable">تحديث ببجي موبايل</li>
+                    <li class="editable">كورس الفوتوشوب الكامل</li>
+                </ul>
+            </div>
+        </aside>
+    </div>
+
+    <script>
+        const adminPass = "2006";
+
+        function loginAdmin() {
+            let pass = prompt("الرجاء إدخال كلمة سر المدير:");
+            if (pass === adminPass) {
+                document.getElementById('admin-panel').style.display = 'block';
+                document.body.classList.add('admin-active');
+                
+                // تفعيل ميزة التعديل للنصوص
+                document.querySelectorAll('.editable').forEach(el => {
+                    el.contentEditable = true;
+                });
+                
+                // إظهار حقول تعديل الروابط
+                document.querySelectorAll('.admin-only').forEach(el => {
+                    el.style.display = 'block';
+                });
+
+                alert("مرحباً أيها المدير! يمكنك الآن تعديل أي نص بالضغط عليه.");
+            } else {
+                alert("كلمة السر خاطئة!");
+            }
+        }
+
+        function logoutAdmin() {
+            location.reload(); // إعادة تحميل الصفحة لإلغاء وضع التعديل
+        }
+
+        function updateLink(input) {
+            // تحديث رابط زر التحميل القريب من الحقل
+            const card = input.closest('.card');
+            const btn = card.querySelector('.download-btn');
+            btn.href = input.value;
+        }
+
+        function saveChanges() {
+            // هنا في المواقع الحقيقية يتم إرسال البيانات لقاعدة بيانات
+            // في HTML فقط، سنكتفي بإغلاق وضع التعديل
+            document.querySelectorAll('.editable').forEach(el => {
+                el.contentEditable = false;
+            });
+            document.body.classList.remove('admin-active');
+            document.getElementById('admin-panel').style.display = 'none';
+            alert("تم حفظ التغييرات ظاهرياً (ملاحظة: تحتاج برمجة Backend لحفظها بشكل دائم في السيرفر).");
+        }
+    </script>
+</body>
+</html>
